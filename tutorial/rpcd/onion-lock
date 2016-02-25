@@ -15,6 +15,7 @@ case "$1" in
     call)
 		case "$2" in
 			lock)
+				# rotate left
 				if [ `uci get door.@door[0].lock` = '1' ]; then
 					echo '{ "status": "already locked" }'
 				else
@@ -28,6 +29,7 @@ case "$1" in
 				fi
 			;;
 			unlock)
+				# rotate right
 				if [ `uci get door.@door[0].lock` = '1' ]; then
 					pwm-exp -i
 					pwm-exp -p 8 1.2 20
@@ -41,6 +43,7 @@ case "$1" in
 				fi 
 			;;
 			forcelock)
+				# rotate left
 				pwm-exp -i
 				pwm-exp -p 8 1.8 20
 				sleep 2
@@ -50,6 +53,7 @@ case "$1" in
 				echo '{ "status": "locked" }'
 			;;
 			forceunlock)
+				# rotate right
 				pwm-exp -i
 				pwm-exp -p 8 1.2 20
 				sleep 2
