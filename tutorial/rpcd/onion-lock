@@ -1,0 +1,70 @@
+#!/bin/sh
+
+device="door"
+
+jsonLock='"lock": { }'
+jsonUnlock='"unlock": { }'
+jsonForcelock='"forcelock": { }'
+jsonForceunlock='"forceunlock": { }'
+jsonStatus='"status": { }'
+
+case "$1" in
+    list)
+		echo "{ $jsonLock, $jsonUnlock, $jsonForcelock, $jsonForceunlock, $jsonStatus }"
+    ;;
+    call)
+		case "$2" in
+			lock)
+				if [ `uci get door.@door[0].lock` = '1' ]; then
+					echo '{ "status": "already locked" }'
+				else
+					pwm-exp -i
+					pwm-exp -p 8 1.8 20
+					sleep 2
+					pwm-exp -i
+					uci set door.@door[0].lock=1
+					uci commit door
+					echo '{ "status": "locked" }'
+				fi
+			;;
+			unlock)
+				if [ `uci get door.@door[0].lock` = '1' ]; then
+					pwm-exp -i
+					pwm-exp -p 8 1.2 20
+					sleep 2
+					pwm-exp -i
+					uci set door.@door[0].lock=0
+					uci commit door
+					echo '{ "status": "unlocked" }'
+				else
+					echo '{ "status": "already unlocked" }'
+				fi 
+			;;
+			forcelock)
+				pwm-exp -i
+				pwm-exp -p 8 1.8 20
+				sleep 2
+				pwm-exp -i
+				uci set door.@door[0].lock=1
+				uci commit door
+				echo '{ "status": "locked" }'
+			;;
+			forceunlock)
+				pwm-exp -i
+				pwm-exp -p 8 1.2 20
+				sleep 2
+				pwm-exp -i
+				uci set door.@door[0].lock=0
+				uci commit door
+				echo '{ "status": "unlocked" }'
+			;;
+			status)
+				if [ `uci get door.@door[0].lock` = '1' ]; then
+					echo '{ "status": "locked" }'
+				else
+					echo '{ "status": "unlocked" }'
+				fi
+		;;
+		esac
+    ;;
+esac
