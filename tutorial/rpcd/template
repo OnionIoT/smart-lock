@@ -1,0 +1,38 @@
+#!/bin/sh
+
+## Template to use when creating a ubus service
+
+jsonFunction1='"function1": { }'
+jsonFunction2='"function2": { }'
+jsonStatus='"status": { }'
+
+case "$1" in
+    list)
+		# the ubus uses the output of the 'list' to see the available functions and their required arguments
+		echo "{ $jsonFunction1, $jsonFunction2, $jsonStatus }"
+    ;;
+    call)
+		# when actually calling one of the functions
+		case "$2" in
+			function1)
+				# all of the code to implement 'function1' should go here
+
+
+				# the output must be in JSON form
+				echo '{ "output": "function1"}'
+			;;
+			function2)
+				# all of the code to implement 'function2' should go here
+				
+
+				# the output must be in JSON form
+				echo '{ "output": "function2"}'
+			;;
+			status)
+				# all of the code to implement 'status' should go here
+				value="run some command"
+				echo '{ "status": "$value" }'
+		;;
+		esac
+    ;;
+esac
